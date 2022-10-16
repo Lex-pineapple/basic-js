@@ -1,4 +1,4 @@
-const { NotImplementedError } = require('../extensions/index.js');
+// const { NotImplementedError } = require('../extensions/index.js');
 
 /**
  * Implement class VigenereCipheringMachine that allows us to create
@@ -20,13 +20,54 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  type = true;
+  constructor(val) {
+    if (val === undefined) {
+      this.type = true;
+    } else {
+      this.type = val;
+    }
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  encrypt(string, key) {
+    if (string === undefined || key === undefined) {
+      throw new Error('Incorrect arguments!');
+    } else {
+      let output = "";
+      for (let i = 0, j = 0; i < string.length; i++) {
+        let currChar = string[i];
+        if (currChar.charCodeAt() >= 65 && currChar.charCodeAt() <= 90) {
+          let upChar = ((currChar.charCodeAt() - 65) + (key[j%key.length].toUpperCase().charCodeAt() - 65)) % 26;
+          output += String.fromCharCode(upChar + 65);
+          j++;
+        } else if (currChar.charCodeAt() >= 97 && currChar.charCodeAt() <= 122) {
+          let lowChar = ((currChar.charCodeAt() - 97) + (key[j%key.length].toLowerCase().charCodeAt() - 97)) % 26;
+          output += String.fromCharCode(lowChar + 97);
+          j++;
+        } else {
+          output += currChar;
+        }
+      }
+      if (this.type == true) {
+        return output.toUpperCase();
+      } else {
+        return output.split('').reverse().join('').toUpperCase();
+      }
+    }
+  }
+  decrypt(string, key) {
+    if (string === undefined || key === undefined) {
+      throw new Error('Incorrect arguments!');
+    } else {
+      let output = "";
+      let newKey = "";
+      for (let i = 0; i < key.length; i++) {
+        let keyChar = key[i]
+        if ((keyChar.charCodeAt() >= 65 && keyChar.charCodeAt() <= 90) || (keyChar.charCodeAt() >= 97 && keyChar.charCodeAt() <= 122)) {
+          newKey += String.fromCharCode(((26 - ((keyChar.charCodeAt() - 65) % 32))% 26)+65);
+        }
+      }
+      return this.encrypt(string, newKey);
+    }
   }
 }
 
